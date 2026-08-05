@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard-header">
+    <h2>Your Habits</h2>
+    <a href="{{ url_for('habits.new_habit') }}" class="btn btn-primary">+ New Habit</a>
+</div>
+
+{% if habits %}
+<div class="habit-grid">
+    {% for habit in habits %}
+    <div class="habit-card">
+        <div class="habit-card-header">
+            <h3><a href="{{ url_for('habits.habit_detail', habit_id=habit.id) }}">{{ habit.name }}</a></h3>
+            <span class="badge">{{ habit.frequency }}</span>
+        </div>
+        {% if habit.description %}
+            <p class="habit-desc">{{ habit.description }}</p>
+        {% endif %}
+        <div class="habit-stats">
+            <span class="streak">🔥 {{ habit.current_streak }} day streak</span>
+            <span class="total">{{ habit.total_checkins }} total check-ins</span>
+        </div>
+        <div class="habit-actions">
+            {% if habit.checked_in_on(today) %}
+                <button class="btn btn-done" disabled>✓ Done Today</button>
+            {% else %}
+                <form method="POST" action="{{ url_for('habits.checkin', habit_id=habit.id) }}">
+                    <button type="submit" class="btn btn-checkin">Check In</button>
+                </form>
+            {% endif %}
+            <form method="POST" action="{{ url_for('habits.delete_habit', habit_id=habit.id) }}"
+                  onsubmit="return confirm('Delete this habit? This cannot be undone.');">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>You haven't created any habits yet.</p>
+    <a href="{{ url_for('habits.new_habit') }}" class="btn btn-primary">Create your first habit</a>
+</div>
+{% endif %}
+{% endblock %}

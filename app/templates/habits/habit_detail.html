@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ habit.name }}{% endblock %}
+{% block content %}
+<div class="detail-header">
+    <a href="{{ url_for('habits.dashboard') }}" class="back-link">&larr; Back to Dashboard</a>
+    <h2>{{ habit.name }}</h2>
+    {% if habit.description %}<p class="habit-desc">{{ habit.description }}</p>{% endif %}
+    <span class="badge">{{ habit.frequency }}</span>
+</div>
+
+<div class="detail-stats">
+    <div class="stat-box">
+        <span class="stat-number">{{ habit.current_streak }}</span>
+        <span class="stat-label">Current Streak</span>
+    </div>
+    <div class="stat-box">
+        <span class="stat-number">{{ habit.total_checkins }}</span>
+        <span class="stat-label">Total Check-ins</span>
+    </div>
+</div>
+
+<h3>Last 30 Days</h3>
+<div id="heatmap" class="heatmap"></div>
+
+<script id="heatmap-data" type="application/json">{{ heatmap_data | tojson }}</script>
+<script src="{{ url_for('static', filename='js/heatmap.js') }}"></script>
+{% endblock %}
